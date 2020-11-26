@@ -31,7 +31,7 @@ docker create \
   -v /path/to/config:/config \
   -v /path/to/tmp:/tmp/xteve \
   --restart unless-stopped \
-  brycelarge/xteve-docker
+  brycelarge/xteve-vpn
 ```
 
 ## Parameters
@@ -123,5 +123,33 @@ You will need to ssh into the running container to run speedtest cli
 Or from host
 
 ```docker exec -t xteve-vpn sh -c 'speedtest --accept-license --accept-gdp'```
+
+#### Example Docker-Compose File
+
+```
+version: '3'
+services:
+  xtevevpn:
+    image: brycelarge/xteve-vpn
+    container_name: xtevevpn
+    ports:
+      - '34400:34400'
+    environment:
+      - 'TZ=Europe/London'
+      - 'VPN_ENABLED=yes'
+      - 'LAN_NETWORK=192.168.0.0/24'
+      - 'NAME_SERVERS=8.8.8.8,8.8.4.4'
+      - 'VPN_TYPE=openvpn'
+    volumes:
+      - '/sharedfolders/xteve/:/root/.xteve'
+      - '/sharedfolders/xteve/config/:/config'
+      - '/sharedfolders/xteve/temp:/tmp/xteve'
+      - '/sharedfolders/vpn:/config/openvpn'
+      - '/sharedfolders/vpn:/etc/openvpn/custom'
+      - '/sharedfolders/vpn:/vpn'
+      - '/dev/net/tun:/dev/net/tun'
+    restart: unless-stopped
+```
+
 
 Enjoy!
